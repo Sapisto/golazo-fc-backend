@@ -1,4 +1,13 @@
-import { Table, Column, Model, ForeignKey, BelongsTo, HasMany, DataType } from "sequelize-typescript";
+import {
+    Table,
+    Column,
+    Model,
+    ForeignKey,
+    BelongsTo,
+    HasMany,
+    DataType,
+    Default,
+} from "sequelize-typescript";
 import { Team } from "./team.model";
 import { Goal } from "./goal.model";
 import { v4 as uuidv4 } from "uuid";
@@ -13,7 +22,29 @@ export class Player extends Model {
     id!: string;
 
     @Column({ type: DataType.STRING, allowNull: false })
-    name!: string;
+    firstName!: string;
+
+    @Column({ type: DataType.STRING, allowNull: false })
+    lastName!: string;
+
+    @Column({ type: DataType.STRING, allowNull: false, unique: true })
+    email!: string;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    position!: string;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    password!: string | null;
+
+    @Default(false)
+    @Column({ type: DataType.BOOLEAN })
+    isVerified!: boolean;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    verificationToken!: string | null;
+
+    @Column({ type: DataType.DATE, allowNull: true })
+    tokenExpires!: Date | null;
 
     @Column({ type: DataType.INTEGER, defaultValue: 0 })
     goals!: number;

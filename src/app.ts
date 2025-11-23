@@ -4,6 +4,9 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import adminRoutes from "./routes/admin.routes";
+import playerRoutes from "./routes/player.routes";
+import teamRoutes from "./routes/team.routes";
 
 const app = express();
 
@@ -17,6 +20,11 @@ app.use(morgan("dev"));
 app.get("/", (req: Request, res: Response) => {
     res.send("Golazo FC Backend API is running...");
 });
+
+// -------------------- Routes --------------------
+app.use("/api/admin", adminRoutes);     // Admin login routes
+app.use("/api/players", playerRoutes);  // Player management routes
+app.use("/api/teams", teamRoutes);    // Team management routes
 
 // Error interface
 interface AppError {
