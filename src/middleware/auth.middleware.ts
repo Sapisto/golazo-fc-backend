@@ -1,40 +1,66 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../services/auth.service";
 
-
 export interface AuthRequest<
-    BodyType = any,       // the type for req.body
-    ParamsType = any,     // the type for req.params
-    QueryType = any       // the type for req.query
+    BodyType = any,
+    ParamsType = any,
+    QueryType = any
 > extends Request<ParamsType, any, BodyType, QueryType> {
-    adminId?: string;     // this is your custom property set after JWT verification
+    user?: { id: string; role: string }; // store decoded JWT info
+    adminId?: string;                     // optional alias
 }
 
-
-export const authenticateAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+// Generic authentication middleware — validates token
+export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
             succeeded: false,
             code: 401,
             message: "Authorization header missing",
-            errors: ["Unauthorized"]
+            errors: ["Unauthorized"],
         });
     }
 
     const token = authHeader.split(" ")[1];
-
     try {
-        // ✅ Use verifyToken instead of inline jwt.verify
         const decoded: any = verifyToken(token);
-        req.adminId = decoded.id;
+        req.user = decoded; // store full decoded token
         next();
-    } catch (error: any) {
+    } catch (error) {
         return res.status(401).json({
             succeeded: false,
             code: 401,
             message: "Invalid or expired token",
-            errors: ["Unauthorized"]
+            errors: ["Unauthorized"],
         });
     }
+};
+
+// Admin-only middleware
+export const authorizeAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user || req.user.role !== "admin") {
+        return res.status(403).json({
+            succeeded: false,
+            code: 403,
+            message: "Only admins can perform this action",
+            errors: ["Forbidden"],
+        });
+    }
+    req.adminId = req.user.id; // set alias
+    next();
+};
+
+// Super admin-only middleware
+export const authorizeSuperAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user || req.user.role !== "super-admin") {
+        return res.status(403).json({
+            succeeded: false,
+            code: 403,
+            message: "Only super admins can perform this action",
+            errors: ["Forbidden"],
+        });
+    }
+    req.adminId = req.user.id; // set alias
+    next();
 };

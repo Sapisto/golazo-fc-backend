@@ -1,23 +1,23 @@
 import nodemailer from "nodemailer";
 
 export const sendPlayerInviteEmail = async (
-    email: string,
-    rawPassword: string,
-    firstName: string
+  email: string,
+  rawPassword: string,
+  firstName: string
 ) => {
-    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
+  const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
 
-    const transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST,
-        port: Number(process.env.MAIL_PORT) || 465,
-        secure: true,
-        auth: {
-            user: process.env.MAIL_USER,
-            pass: process.env.MAIL_PASS,
-        },
-    });
+  const transporter = nodemailer.createTransport({
+    host: process.env.MAIL_HOST,
+    port: Number(process.env.MAIL_PORT) || 465,
+    secure: true,
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
 
-    const htmlContent = `
+  const htmlContent = `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -89,7 +89,7 @@ export const sendPlayerInviteEmail = async (
   <body>
     <div class="container">
       <h1>Welcome to Golazo FC, ${firstName}!</h1>
-      <p>An admin has created your player account. Below are your login credentials:</p>
+      <p>Your account has been created. Below are your login credentials:</p>
       <div class="credentials">
         Email: <strong>${email}</strong><br/>
         Password: <strong>${rawPassword}</strong>
@@ -102,10 +102,10 @@ export const sendPlayerInviteEmail = async (
   </html>
   `;
 
-    await transporter.sendMail({
-        from: `"Golazo FC" <no-reply@golazofc.com>`,
-        to: email,
-        subject: "Your Golazo FC Player Account Credentials",
-        html: htmlContent,
-    });
+  await transporter.sendMail({
+    from: `"Golazo FC" <no-reply@golazofc.com>`,
+    to: email,
+    subject: "Your Golazo FC Player Account Credentials",
+    html: htmlContent,
+  });
 };
