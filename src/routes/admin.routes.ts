@@ -7,14 +7,12 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Admin
- *   description: Admin authentication & management
  */
 
 /**
  * @swagger
  * /api/admin/login:
  *   post:
- *     summary: Admin login
  *     tags: [Admin]
  *     requestBody:
  *       required: true
@@ -22,13 +20,11 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - username
- *               - password
+ *             required: [email, password]
  *             properties:
- *               username:
+ *               email:
  *                 type: string
- *                 example: adminuser
+ *                 example: admin@example.com
  *               password:
  *                 type: string
  *                 example: Pass1234
