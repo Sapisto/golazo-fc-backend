@@ -10,12 +10,9 @@ const crypto_1 = __importDefault(require("crypto"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const emailService_1 = require("../utils/emailService");
 const auth_service_1 = require("../services/auth.service");
-// const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
-// const JWT_EXPIRES_IN = "1d";
 // -------------------- Create Player --------------------
 const createPlayer = async (req, res) => {
     try {
-        // Only logged-in admin can create players
         if (!req.adminId) {
             const response = {
                 succeeded: false,
@@ -27,7 +24,7 @@ const createPlayer = async (req, res) => {
         }
         const { firstName, lastName, email, position, teamId } = req.body;
         const token = crypto_1.default.randomBytes(32).toString("hex");
-        const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24hrs
+        const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hrs
         const player = await player_model_1.Player.create({
             firstName,
             lastName,
@@ -46,7 +43,7 @@ const createPlayer = async (req, res) => {
             code: 201,
             message: "Player created. Invitation email sent.",
             data: player,
-            errors: null
+            errors: null,
         };
         return res.status(201).json(response);
     }
@@ -71,7 +68,7 @@ const adminLogin = async (req, res) => {
                 succeeded: false,
                 code: 401,
                 message: "Invalid email or password",
-                errors: ["Admin not found"]
+                errors: ["Admin not found"],
             });
         }
         const passwordMatch = await bcryptjs_1.default.compare(password, admin.password);
@@ -80,17 +77,17 @@ const adminLogin = async (req, res) => {
                 succeeded: false,
                 code: 401,
                 message: "Invalid email or password",
-                errors: ["Wrong password"]
+                errors: ["Wrong password"],
             });
         }
-        // ✅ Use generateToken instead of inline jwt.sign
+        // ✅ Use generateToken
         const token = (0, auth_service_1.generateToken)({ id: admin.id, email: admin.email });
         return res.json({
             succeeded: true,
             code: 200,
             message: "Login successful",
             data: { token },
-            errors: null
+            errors: null,
         });
     }
     catch (error) {
@@ -98,7 +95,7 @@ const adminLogin = async (req, res) => {
             succeeded: false,
             code: 500,
             message: "Failed to login",
-            errors: [error.message]
+            errors: [error.message],
         });
     }
 };

@@ -1,11 +1,11 @@
 import { Table, Column, Model, DataType } from "sequelize-typescript";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 
 @Table({ tableName: "invite_tokens" })
 export class InviteToken extends Model<InviteToken> {
     @Column({
         type: DataType.UUID,
-        defaultValue: () => uuidv4(),
+        defaultValue: () => randomUUID(),
         primaryKey: true,
     })
     id!: string;

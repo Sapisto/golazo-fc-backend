@@ -1,13 +1,13 @@
 import { Table, Column, Model, HasMany, DataType } from "sequelize-typescript";
 import { Player } from "./player.model";
 import { Match } from "./match.model";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 
 @Table({ tableName: "teams" })
 export class Team extends Model {
     @Column({
         type: DataType.UUID,
-        defaultValue: () => uuidv4(),
+        defaultValue: () => randomUUID(),
         primaryKey: true
     })
     id!: string;
