@@ -22,11 +22,14 @@
   },
   "homepage": "https://github.com/Sapisto/golazo-fc-backend#readme",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/chalk": "^2.2.4",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.1",
+    "@types/nodemailer": "^7.0.4",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.11",
     "sequelize-cli": "^6.6.3",
@@ -34,15 +37,21 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
+    "nodemailer": "^7.0.10",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^8.3.2"
   }
 }

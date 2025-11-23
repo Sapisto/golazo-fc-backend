@@ -44,3 +44,4 @@ __decorate([
 exports.Team = Team = __decorate([
     (0, sequelize_typescript_1.Table)({ tableName: "teams" })
 ], Team);
+//# sourceMappingURL=team.model.js.map

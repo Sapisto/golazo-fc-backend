@@ -58,3 +58,4 @@ __decorate([
 exports.Match = Match = __decorate([
     (0, sequelize_typescript_1.Table)({ tableName: "matches" })
 ], Match);
+//# sourceMappingURL=match.model.js.map

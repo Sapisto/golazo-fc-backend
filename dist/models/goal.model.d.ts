@@ -9,4 +9,3 @@ export declare class Goal extends Model<Goal> {
     player: Player;
     match: Match;
 }
-//# sourceMappingURL=goal.model.d.ts.map

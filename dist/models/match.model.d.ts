@@ -1,6 +1,6 @@
 import { Model } from "sequelize-typescript";
-import { Team } from "./team.model.js";
-import { Goal } from "./goal.model.js";
+import { Team } from "./team.model";
+import { Goal } from "./goal.model";
 export declare class Match extends Model {
     id: string;
     homeTeamId: string;
@@ -11,4 +11,3 @@ export declare class Match extends Model {
     awayTeam: Team;
     goals: Goal[];
 }
-//# sourceMappingURL=match.model.d.ts.map

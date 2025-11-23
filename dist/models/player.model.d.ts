@@ -1,12 +1,18 @@
 import { Model } from "sequelize-typescript";
-import { Team } from "./team.model.js";
-import { Goal } from "./goal.model.js";
+import { Team } from "./team.model";
+import { Goal } from "./goal.model";
 export declare class Player extends Model {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    position: string;
+    password: string | null;
+    isVerified: boolean;
+    verificationToken: string | null;
+    tokenExpires: Date | null;
     goals: number;
     teamId: string;
     team: Team;
     goalsScored: Goal[];
 }
-//# sourceMappingURL=player.model.d.ts.map

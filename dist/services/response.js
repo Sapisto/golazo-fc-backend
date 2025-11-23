@@ -5,3 +5,4 @@ const calculateTotalPages = (totalRecords, pageSize) => {
     return Math.ceil(totalRecords / pageSize);
 };
 exports.calculateTotalPages = calculateTotalPages;
+//# sourceMappingURL=response.js.map

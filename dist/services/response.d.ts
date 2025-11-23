@@ -13,4 +13,3 @@ export interface GeneralResponse<T> {
     errors?: string[] | null;
 }
 export declare const calculateTotalPages: (totalRecords: number, pageSize: number) => number;
-//# sourceMappingURL=response.d.ts.map
