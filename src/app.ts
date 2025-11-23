@@ -36,12 +36,27 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API documentation for Golazo FC backend",
         },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
-    apis: ["./src/routes/*.ts"], // <-- make sure this path points to your route files
+    apis: ["./src/routes/*.ts"], // Route files MUST contain JSDoc comments
 };
 
 const swaggerSpecs = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
 
 // -------------------- Error interface --------------------
 interface AppError {
