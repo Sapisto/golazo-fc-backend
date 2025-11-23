@@ -1,6 +1,6 @@
 import express from "express";
 import { getTeams, createTeam } from "../controllers/team.controller";
-import { authenticateAdmin } from "../middleware/auth.middleware";
+import { authenticateUser, authorizeSuperAdmin } from "../middleware/auth.middleware";
 
 const router = express.Router();
 
@@ -60,6 +60,7 @@ router.get("/", getTeams);
  *       403:
  *         description: Unauthorized
  */
-router.post("/", authenticateAdmin, createTeam);
+router.post("/", authenticateUser, authorizeSuperAdmin, createTeam);
+
 
 export default router;

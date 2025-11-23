@@ -2,7 +2,7 @@ import express from "express";
 import { createPlayer } from "../controllers/admin.controller";
 import { validateBody } from "../middleware/validate.middleware";
 import { createPlayerSchema } from "../utils/player.validation";
-import { authenticateAdmin } from "../middleware/auth.middleware";
+import { authorizeAdmin, authenticateUser } from "../middleware/auth.middleware";
 
 const router = express.Router();
 
@@ -52,9 +52,11 @@ const router = express.Router();
  */
 router.post(
     "/",
-    authenticateAdmin,
+    authenticateUser,
+    authorizeAdmin,
     validateBody(createPlayerSchema),
     createPlayer
 );
+
 
 export default router;

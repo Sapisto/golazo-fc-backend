@@ -34,7 +34,8 @@ export const userLogin = async (
         }
 
         // Generate JWT token with user role
-        const token = generateToken({ id: user.id, email: user.email, role: user.role });
+        const token = generateToken({ id: user.id, role: user.role });
+
 
         return res.json({
             succeeded: true,

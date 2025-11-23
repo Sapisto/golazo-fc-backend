@@ -7,15 +7,6 @@ import { Team } from "../models/team.model";
 // -------------------- Create Team --------------------
 export const createTeam = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-        if (!req.adminId) {
-            const response: GeneralResponse<null> = {
-                succeeded: false,
-                code: 403,
-                message: "Only admins can create teams",
-                errors: ["Unauthorized"],
-            };
-            return res.status(403).json(response);
-        }
 
         const { name } = req.body;
 

@@ -22,14 +22,6 @@ export const createPlayer = async (
     const t = await sequelize.transaction();
 
     try {
-        if (!req.adminId) {
-            return res.status(403).json({
-                succeeded: false,
-                code: 403,
-                message: "Only admins can create players",
-                errors: ["Unauthorized"],
-            });
-        }
 
         const { firstName, lastName, email, teamId, position, username } = req.body;
 
