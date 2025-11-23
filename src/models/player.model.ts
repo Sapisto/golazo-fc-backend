@@ -22,38 +22,35 @@ export class Player extends Model {
     })
     id!: string;
 
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column(DataType.STRING)
     firstName!: string;
 
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column(DataType.STRING)
     lastName!: string;
 
-    @Column({ type: DataType.STRING, allowNull: false, unique: true })
+    @Column({ type: DataType.STRING, unique: true })
     email!: string;
 
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column(DataType.STRING)
     position!: string;
 
-    @Column({ type: DataType.STRING, allowNull: true })
-    password!: string | null;
-
     @Default(false)
-    @Column({ type: DataType.BOOLEAN })
+    @Column(DataType.BOOLEAN)
     isVerified!: boolean;
 
-
-    @Column({ type: DataType.INTEGER, defaultValue: 0 })
+    @Default(0)
+    @Column(DataType.INTEGER)
     goals!: number;
 
     @ForeignKey(() => User)
-    @Column({ type: DataType.UUID, allowNull: false })
+    @Column(DataType.UUID)
     userId!: string;
 
     @BelongsTo(() => User)
     user!: User;
 
     @ForeignKey(() => Team)
-    @Column({ type: DataType.UUID, allowNull: false })
+    @Column(DataType.UUID)
     teamId!: string;
 
     @BelongsTo(() => Team)

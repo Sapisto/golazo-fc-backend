@@ -28,7 +28,7 @@ export async function syncDatabase() {
         console.log("✅ Connected to PostgreSQL successfully!");
 
         // Drop all tables and recreate (use force: true)
-        await sequelize.sync({ force: true }); // drops and recreates all tables
+        await sequelize.sync({ alter: true });
 
         // Create default team first
         const defaultTeam = await Team.create({ name: "Default FC" });
