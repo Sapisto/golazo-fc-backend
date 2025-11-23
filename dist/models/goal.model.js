@@ -13,14 +13,14 @@ exports.Goal = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const player_model_1 = require("./player.model");
 const match_model_1 = require("./match.model");
-const uuid_1 = require("uuid");
+const crypto_1 = require("crypto");
 let Goal = class Goal extends sequelize_typescript_1.Model {
 };
 exports.Goal = Goal;
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.UUID,
-        defaultValue: uuid_1.v4,
+        defaultValue: crypto_1.randomUUID,
         primaryKey: true
     }),
     __metadata("design:type", String)

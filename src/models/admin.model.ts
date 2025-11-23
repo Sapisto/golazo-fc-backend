@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType } from "sequelize-typescript";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 
 // Define attributes required when creating Admin
 interface AdminCreationAttributes {
@@ -14,7 +14,7 @@ interface AdminCreationAttributes {
 export class Admin extends Model<Admin, AdminCreationAttributes> {
     @Column({
         type: DataType.UUID,
-        defaultValue: () => uuidv4(),
+        defaultValue: () => randomUUID(),
         primaryKey: true,
     })
     id!: string;

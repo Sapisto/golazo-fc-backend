@@ -11,14 +11,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InviteToken = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const uuid_1 = require("uuid");
+const crypto_1 = require("crypto");
 let InviteToken = class InviteToken extends sequelize_typescript_1.Model {
 };
 exports.InviteToken = InviteToken;
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.UUID,
-        defaultValue: () => (0, uuid_1.v4)(),
+        defaultValue: () => (0, crypto_1.randomUUID)(),
         primaryKey: true,
     }),
     __metadata("design:type", String)
