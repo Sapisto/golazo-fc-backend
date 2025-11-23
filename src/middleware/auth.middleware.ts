@@ -2,8 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../services/auth.service";
 
 
-export interface AuthRequest extends Request {
-    adminId?: string;
+export interface AuthRequest<
+    BodyType = any,       // the type for req.body
+    ParamsType = any,     // the type for req.params
+    QueryType = any       // the type for req.query
+> extends Request<ParamsType, any, BodyType, QueryType> {
+    adminId?: string;     // this is your custom property set after JWT verification
 }
 
 
