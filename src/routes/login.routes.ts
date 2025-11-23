@@ -14,7 +14,6 @@ const router = express.Router();
  * /api/login:
  *   post:
  *     tags: [Auth]
- *     summary: Login for all users (super-admin, admin, player)
  *     requestBody:
  *       required: true
  *       content:
@@ -61,6 +60,6 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/login", userLogin);
+router.post("/", userLogin);
 
 export default router;
