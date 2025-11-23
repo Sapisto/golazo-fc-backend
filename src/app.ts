@@ -3,17 +3,29 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import adminRoutes from "./routes/admin.routes";
+// import adminRoutes from "./routes/admin.routes";
 import playerRoutes from "./routes/player.routes";
 import teamRoutes from "./routes/team.routes";
+import loginRoute from "./routes/login.routes";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
 const app = express();
 
 // -------------------- Middlewares --------------------
-app.use(cors());
-app.use(helmet());
+app.use(cors({
+    origin: "*", // or your frontend domain
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+app.use(
+    helmet({
+        crossOriginResourcePolicy: false,   // allow Authorization header
+        contentSecurityPolicy: false,       // disable CSP for public APIs
+    })
+);
+
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -23,7 +35,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // -------------------- Routes --------------------
-app.use("/api/admin", adminRoutes);     // Admin login routes
+// app.use("/api/admin", adminRoutes);  
+app.use("/api/auth", loginRoute);    // Authentication routes
 app.use("/api/players", playerRoutes);  // Player management routes
 app.use("/api/teams", teamRoutes);      // Team management routes
 

@@ -1,115 +1,72 @@
+import { User } from "../models/admin.model";
 import { Player } from "../models/player.model";
-import { Admin } from "../models/admin.model";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { sendPlayerInviteEmail } from "../utils/emailService";
 import { GeneralResponse } from "../services/response";
 import { AuthRequest } from "../middleware/auth.middleware";
-import { Team } from "../models/team.model";
 import { Response } from "express";
-import { generateToken } from "../services/auth.service";
 
 // -------------------- Create Player --------------------
 export const createPlayer = async (
-    req: AuthRequest<{ firstName: string; lastName: string; email: string; position: string; teamId: string }>,
+    req: AuthRequest<{ firstName: string; lastName: string; email: string; teamId: string; position: string }>,
     res: Response
 ) => {
     try {
         if (!req.adminId) {
-            const response: GeneralResponse<null> = {
+            return res.status(403).json({
                 succeeded: false,
                 code: 403,
                 message: "Only admins can create players",
                 errors: ["Unauthorized"],
-            };
-            return res.status(403).json(response);
+            } as GeneralResponse<null>);
         }
 
-        const { firstName, lastName, email, position, teamId } = req.body;
+        const { firstName, lastName, email, teamId, position } = req.body;
 
-        const token = crypto.randomBytes(32).toString("hex");
-        const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hrs
+        // Generate random password
+        const rawPassword = crypto.randomBytes(6).toString("hex"); // 12 chars
+        const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
+        // 1️⃣ Create User login
+        const user = await User.create({
+            name: `${firstName} ${lastName}`,
+            email,
+            password: hashedPassword,
+            role: "player",
+            isActive: true,
+            username: email.split("@")[0],
+        });
+
+        // 2️⃣ Create Player profile
         const player = await Player.create({
             firstName,
             lastName,
             email,
             position,
             teamId,
-            verificationToken: token,
-            tokenExpires,
-            isVerified: false,
-            password: null,
+            userId: user.id,
             goals: 0,
+            isVerified: false,
         });
 
-        await sendPlayerInviteEmail(email, token);
+        // 3️⃣ Send login credentials via email
+        await sendPlayerInviteEmail(email, rawPassword, firstName);
 
-        const response: GeneralResponse<typeof player> = {
+        return res.status(201).json({
             succeeded: true,
             code: 201,
-            message: "Player created. Invitation email sent.",
-            data: player,
+            message: "Player created. Credentials sent via email.",
+            data: player, // Player instance
             errors: null,
-        };
+        } as GeneralResponse<Player>);
 
-        return res.status(201).json(response);
-    } catch (error: any) {
-        const response: GeneralResponse<null> = {
-            succeeded: false,
-            code: 500,
-            message: "Failed to create player",
-            errors: [error.message],
-        };
-
-        return res.status(500).json(response);
-    }
-};
-
-// -------------------- Admin Login --------------------
-export const adminLogin = async (
-    req: AuthRequest<{ email: string; password: string }>,
-    res: Response
-) => {
-    try {
-        const { email, password } = req.body;
-        const admin = await Admin.findOne({ where: { email } });
-
-        if (!admin) {
-            return res.status(401).json({
-                succeeded: false,
-                code: 401,
-                message: "Invalid email or password",
-                errors: ["Admin not found"],
-            });
-        }
-
-        const passwordMatch = await bcrypt.compare(password, admin.password);
-        if (!passwordMatch) {
-            return res.status(401).json({
-                succeeded: false,
-                code: 401,
-                message: "Invalid email or password",
-                errors: ["Wrong password"],
-            });
-        }
-
-        // ✅ Use generateToken
-        const token = generateToken({ id: admin.id, email: admin.email });
-
-        return res.json({
-            succeeded: true,
-            code: 200,
-            message: "Login successful",
-            data: { token },
-            errors: null,
-        });
     } catch (error: any) {
         return res.status(500).json({
             succeeded: false,
             code: 500,
-            message: "Failed to login",
+            message: "Failed to create player",
             errors: [error.message],
-        });
+        } as GeneralResponse<null>);
     }
 };

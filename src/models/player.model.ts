@@ -11,6 +11,7 @@ import {
 import { Team } from "./team.model";
 import { Goal } from "./goal.model";
 import { randomUUID } from "crypto";
+import { User } from "./admin.model";
 
 @Table({ tableName: "players" })
 export class Player extends Model {
@@ -40,14 +41,16 @@ export class Player extends Model {
     @Column({ type: DataType.BOOLEAN })
     isVerified!: boolean;
 
-    @Column({ type: DataType.STRING, allowNull: true })
-    verificationToken!: string | null;
-
-    @Column({ type: DataType.DATE, allowNull: true })
-    tokenExpires!: Date | null;
 
     @Column({ type: DataType.INTEGER, defaultValue: 0 })
     goals!: number;
+
+    @ForeignKey(() => User)
+    @Column({ type: DataType.UUID, allowNull: false })
+    userId!: string;
+
+    @BelongsTo(() => User)
+    user!: User;
 
     @ForeignKey(() => Team)
     @Column({ type: DataType.UUID, allowNull: false })

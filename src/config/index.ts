@@ -5,14 +5,14 @@ import { Team } from "../models/team.model";
 import { Player } from "../models/player.model";
 import { Match } from "../models/match.model";
 import { Goal } from "../models/goal.model";
-import { Admin } from "../models/admin.model";
+import { User } from "../models/admin.model";
 import { InviteToken } from "../models/invite-token.model";
 
 dotenv.config();
 
 export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
     dialect: "postgres",
-    models: [Team, Player, Match, Goal, Admin, InviteToken],
+    models: [Team, Player, Match, Goal, User, InviteToken],
     dialectOptions: {
         ssl: {
             require: true,
@@ -22,39 +22,70 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
     logging: console.log,
 });
 
-// Test connection, sync tables, and create initial admin
 export async function syncDatabase() {
     try {
         await sequelize.authenticate();
-        console.log("✅ Connected to Neon PostgreSQL successfully!");
+        console.log("✅ Connected to PostgreSQL successfully!");
 
-        // Sync all models
-        // await sequelize.sync({ force: true });
-        // console.log("✅ All tables recreated with force!");
-        await sequelize.sync({ alter: true });
-        console.log("✅ All tables have been created/updated!");
-        const adminExists = await Admin.count();
-        if (adminExists === 0) {
-            const hashedPassword = await bcrypt.hash("Admin@123", 10);
+        // Drop all tables and recreate (use force: true)
+        await sequelize.sync({ force: true }); // drops and recreates all tables
 
-            await Admin.create({
-                name: "Abdulazeez Alhassan",
-                username: "A_cube",
-                email: "admin@golazo.com",
-                password: hashedPassword,
-            }); // no TS error now
-            console.log("✅ Default admin created");
-        } else {
-            console.log("ℹ️ Admin already exists, skipping creation");
-        }
+        // Create default team first
+        const defaultTeam = await Team.create({ name: "Default FC" });
 
+        // Default super-admin
+        const superAdminPassword = await bcrypt.hash("SuperAdmin@123", 10);
+        await User.create({
+            name: "Super Admin",
+            username: "superadmin",
+            email: "superadmin@golazo.com",
+            password: superAdminPassword,
+            role: "super-admin",
+            isActive: true,
+        });
+
+        // Default admin
+        const adminPassword = await bcrypt.hash("Admin@123", 10);
+        await User.create({
+            name: "Seper Admin",
+            username: "admin",
+            email: "admin@golazo.com",
+            password: adminPassword,
+            role: "admin",
+            isActive: true,
+        });
+
+        // Default player
+        const playerPassword = await bcrypt.hash("Player@123", 10);
+        const playerUser = await User.create({
+            name: "Default Player",
+            username: "player1",
+            email: "player1@golazo.com",
+            password: playerPassword,
+            role: "player",
+            isActive: true,
+        });
+
+        await Player.create({
+            firstName: "Default",
+            lastName: "Player",
+            email: "player1@golazo.com",
+            position: "Forward",
+            teamId: defaultTeam.id,
+            userId: playerUser.id,
+            goals: 0,
+            isVerified: false,
+        });
+
+
+        console.log("✅ Default player created");
 
     } catch (error) {
-        console.error("❌ Failed to connect or sync database:", error);
+        console.error("❌ Failed to sync database:", error);
     }
 }
 
-// Run sync automatically if this file is executed directly
+// Run sync automatically if executed directly
 if (require.main === module) {
     syncDatabase();
 }
