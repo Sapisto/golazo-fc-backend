@@ -50,3 +50,4 @@ __decorate([
 exports.Goal = Goal = __decorate([
     (0, sequelize_typescript_1.Table)({ tableName: "goals" })
 ], Goal);
+//# sourceMappingURL=goal.model.js.map
