@@ -10,14 +10,12 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Players
- *   description: Player management
  */
 
 /**
  * @swagger
  * /api/players:
  *   post:
- *     summary: Create a new player (Admin only)
  *     tags: [Players]
  *     security:
  *       - bearerAuth: []
@@ -27,20 +25,30 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [firstName, lastName, email, position, teamId]
  *             properties:
- *               name:
+ *               firstName:
  *                 type: string
+ *                 example: John
+ *               lastName:
+ *                 type: string
+ *                 example: Doe
+ *               email:
+ *                 type: string
+ *                 example: johndoe@example.com
  *               position:
  *                 type: string
+ *                 example: Forward
  *               teamId:
  *                 type: string
+ *                 example: 1
  *     responses:
  *       201:
- *         description: Player created successfully
+ *         description: Player created
  *       400:
  *         description: Validation error
- *       401:
- *         description: Not authorized
+ *       403:
+ *         description: Unauthorized
  */
 router.post(
     "/",
