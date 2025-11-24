@@ -2,8 +2,9 @@ import express from "express";
 import { 
   createPlayer, 
   updatePlayer, 
-  deletePlayer, 
+  deletePlayer,
 } from "../controllers/admin.controller"; 
+import { getPlayersByTeam } from "../controllers/player.controller";
 import { validateBody } from "../middleware/validate.middleware";
 import { createPlayerSchema, updatePlayerSchema } from "../validation/validation"; 
 import { authorizeAdmin, authenticateUser } from "../middleware/auth.middleware";
@@ -33,26 +34,17 @@ const router = express.Router();
  *             properties:
  *               firstName:
  *                 type: string
- *                 example: John
  *               lastName:
  *                 type: string
- *                 example: Doe
  *               email:
  *                 type: string
- *                 example: johndoe@example.com
  *               position:
  *                 type: string
- *                 example: Forward
  *               teamName:
  *                 type: string
- *                 example: Default FC
  *     responses:
  *       201:
  *         description: Player created
- *       400:
- *         description: Validation error or team not found
- *       403:
- *         description: Unauthorized
  */
 router.post(
   "/",
@@ -75,29 +67,9 @@ router.post(
  *         required: true
  *         schema:
  *           type: string
- *         description: ID of the player to update
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               firstName:
- *                 type: string
- *               lastName:
- *                 type: string
- *               email:
- *                 type: string
- *               position:
- *                 type: string
  *     responses:
  *       200:
  *         description: Player updated successfully
- *       400:
- *         description: Validation error or email conflict
- *       404:
- *         description: Player not found
  */
 router.put(
   "/:playerId",
@@ -114,24 +86,36 @@ router.put(
  *     tags: [Players]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: playerId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID of the player to delete
- *     responses:
- *       200:
- *         description: Player deleted successfully
- *       404:
- *         description: Player not found
  */
 router.delete(
   "/:playerId",
   authenticateUser,
   authorizeAdmin,
   deletePlayer
+);
+
+/**
+ * @swagger
+ * /api/players/team/{teamId}:
+ *   get:
+ *     tags: [Players]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Players fetched successfully
+ */
+router.get(
+  "/team/:teamId",
+  authenticateUser,
+  authorizeAdmin,
+  getPlayersByTeam
 );
 
 export default router;
