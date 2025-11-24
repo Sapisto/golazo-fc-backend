@@ -17,7 +17,7 @@ export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunc
         return res.status(401).json({
             succeeded: false,
             code: 401,
-            message: "Authorization header missing",
+            message: "You are not authorized",
             errors: ["Unauthorized"],
         });
     }

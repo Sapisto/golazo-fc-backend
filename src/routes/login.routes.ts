@@ -1,5 +1,10 @@
 import express from "express";
-import { userLogin } from "../controllers/login.controller";
+import {
+  userLogin,
+  resetPassword,
+  changePassword,
+} from "../controllers/login.controller";
+import { authenticateUser } from "../middleware/auth.middleware";
 
 const router = express.Router();
 
@@ -7,6 +12,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Auth
+ *   description: Authentication Endpoints
  */
 
 /**
@@ -14,6 +20,7 @@ const router = express.Router();
  * /api/auth/login:
  *   post:
  *     tags: [Auth]
+ *     summary: Login a user
  *     requestBody:
  *       required: true
  *       content:
@@ -33,33 +40,69 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 succeeded:
- *                   type: boolean
- *                 code:
- *                   type: number
- *                 message:
- *                   type: string
- *                 data:
- *                   type: object
- *                   properties:
- *                     token:
- *                       type: string
- *                     role:
- *                       type: string
- *                 errors:
- *                   type: array
- *                   items:
- *                     type: string
  *       401:
  *         description: Invalid credentials
- *       500:
- *         description: Server error
  */
 router.post("/login", userLogin);
+
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Reset the password of a user and email the new one
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: New password sent to email
+ *       404:
+ *         description: Email not found
+ */
+router.post("/reset-password", resetPassword);
+
+/**
+ * @swagger
+ * /api/auth/change-password:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Change password for logged-in user
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: OldPass123
+ *               newPassword:
+ *                 type: string
+ *                 example: NewPass456
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Old password incorrect
+ *       404:
+ *         description: User not found
+ */
+router.post("/change-password", authenticateUser, changePassword);
 
 export default router;

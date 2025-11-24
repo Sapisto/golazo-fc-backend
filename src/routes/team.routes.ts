@@ -1,6 +1,20 @@
 import express from "express";
-import { getTeams, createTeam } from "../controllers/team.controller";
-import { authenticateUser, authorizeSuperAdmin } from "../middleware/auth.middleware";
+import { 
+  getTeams, 
+  createTeam, 
+  getTeamByIdOrName 
+} from "../controllers/team.controller";
+
+import { getPlayersByTeam } from "../controllers/player.controller";
+
+import {
+  authenticateUser,
+  authorizeAdmin,
+  authorizeSuperAdmin,
+} from "../middleware/auth.middleware";
+
+import { validateBody } from "../middleware/validate.middleware";
+import { createTeamSchema } from "../validation/validation";
 
 const router = express.Router();
 
@@ -15,24 +29,50 @@ const router = express.Router();
  * /api/teams:
  *   get:
  *     tags: [Teams]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: pageNumber
  *         schema:
  *           type: integer
- *           example: 1
  *         description: Page number
  *       - in: query
  *         name: pageSize
  *         schema:
  *           type: integer
- *           example: 10
  *         description: Number of items per page
  *     responses:
  *       200:
  *         description: Paginated list of teams
  */
-router.get("/", getTeams);
+router.get("/", authenticateUser, getTeams);
+
+/**
+ * @swagger
+ * /api/teams/single:
+ *   get:
+ *     tags: [Teams]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: string
+ *         description: Team ID
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Team name
+ *     responses:
+ *       200:
+ *         description: Team details
+ *       404:
+ *         description: Team not found
+ */
+router.get("/single", authenticateUser, getTeamByIdOrName);
 
 /**
  * @swagger
@@ -51,16 +91,46 @@ router.get("/", getTeams);
  *             properties:
  *               name:
  *                 type: string
- *                 example: Golazo FC
  *     responses:
  *       201:
  *         description: Team created
  *       400:
- *         description: Team name exists
+ *         description: Duplicate name
  *       403:
- *         description: Unauthorized
+ *         description: Forbidden
  */
-router.post("/", authenticateUser, authorizeSuperAdmin, createTeam);
+router.post(
+  "/",
+  authenticateUser,
+  authorizeSuperAdmin,
+  validateBody(createTeamSchema),
+  createTeam
+);
 
+/**
+ * @swagger
+ * /api/teams/{teamId}/players:
+ *   get:
+ *     tags: [Teams]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Players belonging to the team
+ *       404:
+ *         description: Team not found
+ */
+router.get(
+  "/:teamId/players",
+  authenticateUser,
+  authorizeAdmin,
+  getPlayersByTeam
+);
 
 export default router;
