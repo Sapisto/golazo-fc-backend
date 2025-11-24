@@ -7,12 +7,13 @@ import { Match } from "../models/match.model";
 import { Goal } from "../models/goal.model";
 import { User } from "../models/admin.model";
 import { InviteToken } from "../models/invite-token.model";
+import { AuditLog } from "../models/audit-log.model";
 
 dotenv.config();
 
 export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
     dialect: "postgres",
-    models: [Team, Player, Match, Goal, User, InviteToken],
+    models: [Team, Player, Match, Goal, User, AuditLog],
     dialectOptions: {
         ssl: {
             require: true,

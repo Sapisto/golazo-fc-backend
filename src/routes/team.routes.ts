@@ -1,6 +1,14 @@
 import express from "express";
 import { getTeams, createTeam } from "../controllers/team.controller";
-import { authenticateUser, authorizeSuperAdmin } from "../middleware/auth.middleware";
+import { getTeamByIdOrName } from "../controllers/team.controller"; // import new controller
+import {
+  authenticateUser,
+  authorizeAdmin,
+  authorizeSuperAdmin,
+} from "../middleware/auth.middleware";
+import { validateBody } from "../middleware/validate.middleware";
+import { createTeamSchema } from "../validation/validation";
+import { getPlayersByTeam } from "../controllers/admin.controller";
 
 const router = express.Router();
 
@@ -32,7 +40,31 @@ const router = express.Router();
  *       200:
  *         description: Paginated list of teams
  */
-router.get("/", getTeams);
+router.get("/", authenticateUser, getTeams);
+
+/**
+ * @swagger
+ * /api/teams/single:
+ *   get:
+ *     tags: [Teams]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: string
+ *         description: Team ID
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Team name
+ *     responses:
+ *       200:
+ *         description: Team details
+ *       404:
+ *         description: Team not found
+ */
+router.get("/teamById", authenticateUser, getTeamByIdOrName);
 
 /**
  * @swagger
@@ -60,7 +92,40 @@ router.get("/", getTeams);
  *       403:
  *         description: Unauthorized
  */
-router.post("/", authenticateUser, authorizeSuperAdmin, createTeam);
+router.post(
+  "/",
+  authenticateUser,
+  validateBody(createTeamSchema),
+  authorizeSuperAdmin,
+  createTeam
+);
 
+
+/**
+ * @swagger
+ * /api/teams/{teamId}/players:
+ *   get:
+ *     tags: [Players]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the team
+ *     responses:
+ *       200:
+ *         description: List of players in the team
+ *       404:
+ *         description: Team not found
+ */
+router.get(
+  "/players/:teamId",
+  authenticateUser,
+  authorizeAdmin,
+  getPlayersByTeam
+);
 
 export default router;

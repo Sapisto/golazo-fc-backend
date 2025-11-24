@@ -26,6 +26,9 @@ export class Match extends Model {
     @Column({ type: DataType.INTEGER, defaultValue: 0 })
     awayScore!: number;
 
+    @Column({ type: DataType.DATE, allowNull: false })
+    matchDate!: Date;
+
     @BelongsTo(() => Team, "homeTeamId")
     homeTeam!: Team;
 
