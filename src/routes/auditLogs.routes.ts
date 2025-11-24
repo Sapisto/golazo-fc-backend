@@ -19,7 +19,7 @@ const router = express.Router();
  *     tags: [AuditLogs]
  *     security:
  *       - bearerAuth: []
- *     summary: Get paginated audit logs
+//  *     summary: Get paginated audit logs
  *     parameters:
  *       - in: query
  *         name: pageNumber
