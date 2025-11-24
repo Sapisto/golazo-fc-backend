@@ -6,7 +6,7 @@ import {
   PageMeta,
 } from "../services/response";
 import { AuthRequest } from "../middleware/auth.middleware";
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, Response, NextFunction} from "express";
 import { Team } from "../models/team.model";
 import { Match } from "../models/match.model";
 import { createAuditLog } from "../services/audit-log.service";
@@ -220,6 +220,55 @@ export const getTeamByIdOrName = async (req: Request, res: Response) => {
       message: `Error fetching team: ${(error as Error).message}`,
       data: null,
       errors: [(error as Error).message],
+    });
+  }
+};
+
+// -------------------- Delete Team --------------------
+export const deleteTeam = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    const team = await Team.findByPk(id);
+
+    if (!team) {
+      return res.status(404).json({
+        succeeded: false,
+        code: 404,
+        message: "Team not found",
+        errors: ["Invalid team ID"],
+      });
+    }
+
+    await team.destroy();
+
+    // 🔹 Audit log
+    createAuditLog({
+      actorId: req.user!.id,
+      actorRole: req.user!.role,
+      action: "delete_team",
+      targetType: "Team",
+      targetId: id,
+      description: `Team ${team.name} deleted`,
+    });
+
+    return res.status(200).json({
+      succeeded: true,
+      code: 200,
+      message: "Team deleted successfully",
+      data: null,
+      errors: null,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      succeeded: false,
+      code: 500,
+      message: "Failed to delete team",
+      errors: [error.message],
     });
   }
 };
