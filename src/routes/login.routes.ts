@@ -20,7 +20,6 @@ const router = express.Router();
  * /api/auth/login:
  *   post:
  *     tags: [Auth]
- *     summary: Login a user
  *     requestBody:
  *       required: true
  *       content:
@@ -50,7 +49,6 @@ router.post("/login", userLogin);
  * /api/auth/reset-password:
  *   post:
  *     tags: [Auth]
- *     summary: Reset the password of a user and email the new one
  *     requestBody:
  *       required: true
  *       content:
@@ -76,7 +74,6 @@ router.post("/reset-password", resetPassword);
  * /api/auth/change-password:
  *   post:
  *     tags: [Auth]
- *     summary: Change password for logged-in user
  *     security:
  *       - bearerAuth: []
  *     requestBody:

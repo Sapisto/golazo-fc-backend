@@ -2,7 +2,8 @@ import express from "express";
 import { 
   getTeams, 
   createTeam, 
-  getTeamByIdOrName 
+  getTeamByIdOrName,
+  deleteTeam
 } from "../controllers/team.controller";
 
 import { getPlayersByTeam } from "../controllers/player.controller";
@@ -72,7 +73,7 @@ router.get("/", authenticateUser, getTeams);
  *       404:
  *         description: Team not found
  */
-router.get("/single", authenticateUser, getTeamByIdOrName);
+router.get("/getSingleTeam", authenticateUser, getTeamByIdOrName);
 
 /**
  * @swagger
@@ -109,6 +110,30 @@ router.post(
 
 /**
  * @swagger
+ * /api/teams/{teamId}:
+ *   delete:
+ *     tags: [Teams]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the team to delete
+ *     responses:
+ *       200:
+ *         description: Team deleted successfully
+ *       404:
+ *         description: Team not found
+ *       403:
+ *         description: Forbidden
+ */
+router.delete("/:teamId", authenticateUser, authorizeSuperAdmin, deleteTeam);
+
+/**
+ * @swagger
  * /api/teams/{teamId}/players:
  *   get:
  *     tags: [Teams]
@@ -127,7 +152,7 @@ router.post(
  *         description: Team not found
  */
 router.get(
-  "/:teamId/players",
+  "/players/:teamId",
   authenticateUser,
   authorizeAdmin,
   getPlayersByTeam
