@@ -9,7 +9,6 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: AuditLogs
- *   description: Operations related to audit logs
  */
 
 /**
