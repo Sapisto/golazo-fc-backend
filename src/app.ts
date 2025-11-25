@@ -39,7 +39,7 @@ app.get("/", (req: Request, res: Response) => {
 // -------------------- Routes --------------------
 // app.use("/api/admin", adminRoutes);  
 app.use("/api/leaderboard", leaderboardRoutes);  // Leaderboard management routes
-app.use("/api/auditLogs", auditRoute);      // Admin management routes
+app.use("/api/audit-logs", auditRoute);      // Admin management routes
 app.use("/api/auth", loginRoute);    // Authentication routes
 app.use("/api/players", playerRoutes);  // Player management routes
 app.use("/api/teams", teamRoutes);      // Team management routes

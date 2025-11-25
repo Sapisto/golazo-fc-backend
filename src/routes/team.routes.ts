@@ -70,7 +70,7 @@ router.get("/", authenticateUser, getTeams);
  *       404:
  *         description: Team not found
  */
-router.get("/getSingleTeam", authenticateUser, getTeamByIdOrName);
+router.get("/single", authenticateUser, getTeamByIdOrName);
 
 /**
  * @swagger
@@ -149,7 +149,7 @@ router.delete("/:teamId", authenticateUser, authorizeSuperAdmin, deleteTeam);
  *         description: Team not found
  */
 router.get(
-  "/players/:teamId",
+  "/:teamId/players",
   authenticateUser,
   authorizeAdmin,
   getPlayersByTeam

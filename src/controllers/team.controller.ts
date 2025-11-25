@@ -6,10 +6,11 @@ import {
   PageMeta,
 } from "../services/response";
 import { AuthRequest } from "../middleware/auth.middleware";
-import { Request, Response, NextFunction} from "express";
+import { Request, Response, NextFunction } from "express";
 import { Team } from "../models/team.model";
 import { Match } from "../models/match.model";
 import { createAuditLog } from "../services/audit-log.service";
+import { User } from "../models/admin.model";
 
 // -------------------- Create Team --------------------
 
@@ -73,7 +74,20 @@ export const getTeams = async (req: Request, res: Response): Promise<void> => {
       include: [
         {
           model: Player,
-          attributes: ["id", "firstName", "lastName", "position", "goals"],
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "position",
+            "goals",
+            "userId",
+          ],
+          include: [
+            {
+              model: User,
+              attributes: ["username"],
+            },
+          ],
           separate: true,
         },
         {

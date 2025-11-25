@@ -8,6 +8,7 @@ import { AuthRequest } from "../middleware/auth.middleware";
 import { Response } from "express";
 import { sequelize } from "../config";
 import { createAuditLog } from "../services/audit-log.service";
+import { sendEmailWithRetry } from "../utils/emailRetry";
 
 export const createPlayer = async (
   req: AuthRequest<{
@@ -89,9 +90,16 @@ export const createPlayer = async (
       { transaction: t }
     );
 
-    await t.commit();
+    await sendEmailWithRetry(
+      () => sendPlayerInviteEmail(email, rawPassword, firstName),
+      3,
+      3000
+    );
+    console.log(email, rawPassword, "email and password-----");
 
-    await sendPlayerInviteEmail(email, rawPassword, firstName);
+    console.log(sendPlayerInviteEmail, "hhshdhh-----");
+
+    await t.commit();
 
     // 🔹 Audit log
     createAuditLog({
@@ -156,6 +164,7 @@ export const updatePlayer = async (
         transaction: t,
       });
       if (existingUser) {
+        await t.rollback();
         return res.status(400).json({
           succeeded: false,
           code: 400,
@@ -164,8 +173,10 @@ export const updatePlayer = async (
         });
       }
       const user = await User.findByPk(player.userId, { transaction: t });
-      if (user) user.email = email;
-      await user?.save({ transaction: t });
+      if (user) {
+        user.email = email;
+        await user.save({ transaction: t });
+      }
       player.email = email;
     }
 
@@ -173,7 +184,7 @@ export const updatePlayer = async (
     if (lastName) player.lastName = lastName;
     if (position) player.position = position;
 
-    await player.save({ transaction: t });
+    await player.save({ transaction: t }); 
     await t.commit();
 
     // Audit log
@@ -249,5 +260,3 @@ export const deletePlayer = async (req: AuthRequest, res: Response) => {
     });
   }
 };
-
-

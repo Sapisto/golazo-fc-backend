@@ -8,12 +8,13 @@ import { Goal } from "../models/goal.model";
 import { User } from "../models/admin.model";
 import { InviteToken } from "../models/invite-token.model";
 import { AuditLog } from "../models/audit-log.model";
+import { Leaderboard } from "../models/leaderboard.model";
 
 dotenv.config();
 
 export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
     dialect: "postgres",
-    models: [Team, Player, Match, Goal, User, AuditLog],
+    models: [Team, Player, Match, Goal, User, AuditLog, Leaderboard],
     dialectOptions: {
         ssl: {
             require: true,
@@ -35,7 +36,7 @@ export async function syncDatabase() {
         const defaultTeam = await Team.create({ name: "Default FC" });
 
         // Default super-admin
-        const superAdminPassword = await bcrypt.hash("SuperAdmin@123", 10);
+        const superAdminPassword = await bcrypt.hash("Password@123", 10);
         await User.create({
             name: "Super Admin",
             username: "superadmin",
@@ -46,7 +47,7 @@ export async function syncDatabase() {
         });
 
         // Default admin
-        const adminPassword = await bcrypt.hash("Admin@123", 10);
+        const adminPassword = await bcrypt.hash("Password@123", 10);
         await User.create({
             name: "Seper Admin",
             username: "admin",
@@ -57,7 +58,7 @@ export async function syncDatabase() {
         });
 
         // Default player
-        const playerPassword = await bcrypt.hash("Player@123", 10);
+        const playerPassword = await bcrypt.hash("Password@123", 10);
         const playerUser = await User.create({
             name: "Default Player",
             username: "player1",

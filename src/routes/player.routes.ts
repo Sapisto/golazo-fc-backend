@@ -67,14 +67,41 @@ router.post(
  *         required: true
  *         schema:
  *           type: string
+ *         description: ID of the player to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *                 description: Updated first name of the player
+ *               lastName:
+ *                 type: string
+ *                 description: Updated last name of the player
+ *               email:
+ *                 type: string
+ *                 description: Updated email (must be unique)
+ *               position:
+ *                 type: string
+ *                 description: Updated position (e.g., Forward, Midfielder)
  *     responses:
  *       200:
  *         description: Player updated successfully
+ *       400:
+ *         description: Validation error or email already exists
+ *       404:
+ *         description: Player not found
+ *       500:
+ *         description: Server error
  */
+
 router.put(
   "/:playerId",
   authenticateUser,
-  authorizeAdmin,
+  // authorizeAdmin,
   validateBody(updatePlayerSchema),
   updatePlayer
 );
