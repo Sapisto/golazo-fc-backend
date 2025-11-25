@@ -9,6 +9,7 @@ import { AuthRequest } from "../middleware/auth.middleware";
 import { createAuditLog } from "../services/audit-log.service";
 
 // ---------------- CREATE ENTRY (ADMIN) ----------------
+
 export const createLeaderboardEntry = async (
   req: AuthRequest<{
     playerId: string;
@@ -16,14 +17,16 @@ export const createLeaderboardEntry = async (
     goals?: number;
     rcPoints?: number;
     totdPoints?: number;
-    month: string;   // Format: "2025-11"
+    month: string; // Format: "YYYY-MM"
   }>,
   res: Response
 ) => {
-  const t = await sequelize.transaction();
+  const t = await sequelize.transaction(); // Start transaction
+
   try {
     const { playerId, teamId, goals = 0, rcPoints = 0, totdPoints = 0, month } = req.body;
 
+    // 🔹 Validate player
     const player = await Player.findByPk(playerId);
     if (!player) {
       return res.status(404).json({
@@ -34,6 +37,7 @@ export const createLeaderboardEntry = async (
       });
     }
 
+    // 🔹 Validate team
     const team = await Team.findByPk(teamId);
     if (!team) {
       return res.status(404).json({
@@ -44,8 +48,20 @@ export const createLeaderboardEntry = async (
       });
     }
 
+    // 🔹 Optional: Ensure the player belongs to this team
+    if (player.teamId !== team.id) {
+      return res.status(400).json({
+        succeeded: false,
+        code: 400,
+        message: "Player does not belong to the specified team",
+        errors: ["Invalid team-player combination"],
+      });
+    }
+
+    // 🔹 Calculate total points
     const total = goals + rcPoints + totdPoints;
 
+    // 🔹 Create leaderboard entry
     const entry = await Leaderboard.create(
       {
         playerId,
@@ -62,7 +78,7 @@ export const createLeaderboardEntry = async (
 
     await t.commit();
 
-    // Audit log
+    // 🔹 Create audit log
     createAuditLog({
       actorId: req.user!.id,
       actorRole: req.user!.role,
@@ -88,6 +104,7 @@ export const createLeaderboardEntry = async (
     });
   }
 };
+
 
 // -------------------- GET LEADERBOARD BY MONTH (PLAYER + ADMIN) --------------------
 export const getLeaderboardByMonth = async (req: Request, res: Response) => {
