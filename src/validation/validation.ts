@@ -9,7 +9,7 @@ export const createPlayerSchema = Joi.object({
   email: Joi.string().email().required(),
   position: Joi.string().min(2).max(30).required(),
   teamName: Joi.string().min(2).max(100).required(),
-  username: Joi.string().optional(),
+  username: Joi.string().required(),
 });
 
 // Update Player Schema (all optional, but validated if present)

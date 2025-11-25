@@ -1,12 +1,12 @@
 import express from "express";
-import { 
-  createPlayer, 
-  updatePlayer, 
-  deletePlayer,
-} from "../controllers/admin.controller"; 
+import {
+    createPlayer,
+    updatePlayer,
+    deletePlayer,
+} from "../controllers/admin.controller";
 import { getPlayersByTeam } from "../controllers/player.controller";
 import { validateBody } from "../middleware/validate.middleware";
-import { createPlayerSchema, updatePlayerSchema } from "../validation/validation"; 
+import { createPlayerSchema, updatePlayerSchema } from "../validation/validation";
 import { authorizeAdmin, authenticateUser } from "../middleware/auth.middleware";
 
 const router = express.Router();
@@ -30,7 +30,7 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required: [firstName, lastName, email, position, teamName]
+ *             required: [firstName, lastName, email, username, position, teamName]
  *             properties:
  *               firstName:
  *                 type: string
@@ -38,20 +38,51 @@ const router = express.Router();
  *                 type: string
  *               email:
  *                 type: string
+ *               username:
+ *                 type: string
+ *                 description: Username must be provided and unique
  *               position:
  *                 type: string
  *               teamName:
  *                 type: string
  *     responses:
  *       201:
- *         description: Player created
+ *         description: Player created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 succeeded:
+ *                   type: boolean
+ *                 code:
+ *                   type: integer
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     player:
+ *                       type: object
+ *                     loginDetails:
+ *                       type: object
+ *                       properties:
+ *                         email:
+ *                           type: string
+ *                         password:
+ *                           type: string
+ *       400:
+ *         description: Validation error or duplicate email/username
+ *       500:
+ *         description: Server error
  */
+
 router.post(
-  "/",
-  authenticateUser,
-  authorizeAdmin,
-  validateBody(createPlayerSchema),
-  createPlayer
+    "/",
+    authenticateUser,
+    authorizeAdmin,
+    validateBody(createPlayerSchema),
+    createPlayer
 );
 
 /**
@@ -99,11 +130,11 @@ router.post(
  */
 
 router.put(
-  "/:playerId",
-  authenticateUser,
-  // authorizeAdmin,
-  validateBody(updatePlayerSchema),
-  updatePlayer
+    "/:playerId",
+    authenticateUser,
+    // authorizeAdmin,
+    validateBody(updatePlayerSchema),
+    updatePlayer
 );
 
 /**
@@ -115,10 +146,10 @@ router.put(
  *       - bearerAuth: []
  */
 router.delete(
-  "/:playerId",
-  authenticateUser,
-  authorizeAdmin,
-  deletePlayer
+    "/:playerId",
+    authenticateUser,
+    authorizeAdmin,
+    deletePlayer
 );
 
 /**
@@ -139,10 +170,10 @@ router.delete(
  *         description: Players fetched successfully
  */
 router.get(
-  "/team/:teamId",
-  authenticateUser,
-  authorizeAdmin,
-  getPlayersByTeam
+    "/team/:teamId",
+    authenticateUser,
+    authorizeAdmin,
+    getPlayersByTeam
 );
 
 export default router;
