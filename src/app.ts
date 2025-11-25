@@ -10,6 +10,7 @@ import loginRoute from "./routes/login.routes";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import auditRoute from "./routes/auditLogs.routes";
+import leaderboardRoutes from "./routes/leaderboard.routes";
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // -------------------- Routes --------------------
 // app.use("/api/admin", adminRoutes);  
+app.use("/api/leaderboard", leaderboardRoutes);  // Leaderboard management routes
 app.use("/api/auditLogs", auditRoute);      // Admin management routes
 app.use("/api/auth", loginRoute);    // Authentication routes
 app.use("/api/players", playerRoutes);  // Player management routes
