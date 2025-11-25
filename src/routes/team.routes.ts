@@ -5,15 +5,12 @@ import {
   getTeamByIdOrName,
   deleteTeam
 } from "../controllers/team.controller";
-
 import { getPlayersByTeam } from "../controllers/player.controller";
-
 import {
   authenticateUser,
   authorizeAdmin,
   authorizeSuperAdmin,
 } from "../middleware/auth.middleware";
-
 import { validateBody } from "../middleware/validate.middleware";
 import { createTeamSchema } from "../validation/validation";
 
